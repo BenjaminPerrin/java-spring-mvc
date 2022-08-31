@@ -19,9 +19,9 @@ public class UserService {
         return user.getBalance();
     }
 
-    public void setBalance() throws Exception {
+    public void setBalance(Double nb) throws Exception {
         User user = repo.findById(1L).orElseThrow(() -> new Exception()); // Todo throw a custom exception called NotFoundException
-        user.setBalance(10.0);
+        user.setBalance(nb);
 
         repo.save(user);
     }
