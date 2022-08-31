@@ -40,14 +40,14 @@ public class ProductService {
     // -> Est ce que le produit existe ? il reste du stock ?
 //   public void buyProduct(Product product) throws Exception {
 //       
-//       User user = UserRepository.  findById(1L).orElseThrow(() -> new Exception()); // Todo throw a custom exception called NotFoundException
+//       User user = UserRepository.findById(1L).orElseThrow(() -> new Exception()); // Todo throw a custom exception called NotFoundException
 //
 //        if (user.getBalance() > product.getPrice() && 
 //                findById(product.getId()) != null &&
 //                product.getQuantity() > 0) 
 //        {
 //
-//            user.setBalance(user.getBalance() + balance);
+//            user.addBalance(user.getBalance());
 //            repo.save(product);
 //        }
 //        

@@ -9,6 +9,7 @@ import fr.m2i.javaspringmvc.form.UserForm;
 import fr.m2i.javaspringmvc.model.Product;
 import fr.m2i.javaspringmvc.service.ProductService;
 import fr.m2i.javaspringmvc.service.UserService;
+import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,25 @@ public class DistributeurController {
         }
     }
     
+    @PostMapping("buyProduct")
+    public String buyProduct(@ModelAttribute("BuyForm") @Valid BuyForm buyform,
+            BindingResult result, ModelMap model) throws Exception{
+        
+        if (result.hasErrors()) {
+            return "distributeur";
+        }
+        //model.addAttribute("balance", user.getBalance()+userService.getBalance());
+        //userService.setBalance(user.getBalance()+userService.getBalance());
+        //return "redirect:distributeur";
+        try {
+//            userService.
+            return "redirect:distributeur";
+        } catch (Exception e) {
+            result.rejectValue("products", null, "Une erreur est survenue lors de l'achat");
+            return "distributeur";
+        }
+    }
+    
     @ModelAttribute("listProducts")
     public List<Product> findAll() throws Exception{
         return productService.findAll();
@@ -74,8 +94,13 @@ public class DistributeurController {
     }
     
     @ModelAttribute("products")
-    public List<Product> addProductsBean() throws Exception{
-        return productService.findAll();
+    public List<Product> addProductsBean() throws Exception {
+        try {
+            return productService.findAll();
+        } catch (Exception e) {
+            // log no products in database
+            return new ArrayList();
+        }
     }
     
     @ModelAttribute("userForm")

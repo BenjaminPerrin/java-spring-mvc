@@ -49,14 +49,16 @@
             <table>
                 <tr>
                     <td>
-                        <select name="category">
+                        <select name="products">
                         <c:forEach items="${listProducts}" var="products">
-                        <option value="${products.id}">${products.name}</option>
+                        <c:if test="${products.quantity > 0}">
+                            <option value="${products.id}">${products.name}</option>
+                        </c:if>
                         </c:forEach>
                     </td>
                 </tr>
                 <tr>
-                    <td><input type="submit" value="Save" /></td>
+                    <td><input type="submit" value="buy" /></td>
                 </tr>
             </table>
         </form:form>
