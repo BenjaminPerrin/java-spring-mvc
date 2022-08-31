@@ -4,6 +4,7 @@
  */
 package fr.m2i.javaspringmvc.controller;
 
+import fr.m2i.javaspringmvc.form.BuyForm;
 import fr.m2i.javaspringmvc.form.UserForm;
 import fr.m2i.javaspringmvc.model.Product;
 import fr.m2i.javaspringmvc.service.ProductService;
@@ -39,16 +40,22 @@ public class DistributeurController {
     }
     
     @PostMapping("addBalance")
-    public String addBalance(@ModelAttribute @Valid UserForm user,
+    public String addBalance(@ModelAttribute("UserForm") @Valid UserForm user,
             BindingResult result, ModelMap model) throws Exception{
         
         if (result.hasErrors()) {
             return "distributeur";
         }
-        System.out.println(model.getAttribute("balance"));
-        model.addAttribute("balance", user.getBalance()+userService.getBalance());
-        userService.setBalance(user.getBalance()+userService.getBalance());
-        return "redirect:distributeur";
+        //model.addAttribute("balance", user.getBalance()+userService.getBalance());
+        //userService.setBalance(user.getBalance()+userService.getBalance());
+        //return "redirect:distributeur";
+        try {
+            userService.addBalance(user.getBalance());
+            return "redirect:distributeur";
+        } catch (Exception e) {
+            result.rejectValue("balance", null, "Une erreur est survenue lors de l'ajout de crédit");
+            return "distributeur";
+        }
     }
     
     @ModelAttribute("listProducts")
@@ -57,8 +64,13 @@ public class DistributeurController {
     }
     
     @ModelAttribute("balance")
-    public Double addBalanceBean() throws Exception{
-        return userService.getBalance();
+    public Double addBalanceBean() {
+        try {
+            return userService.getBalance();
+        } catch (Exception e) {
+            // log user not found
+            return 0.0;
+        }
     }
     
     @ModelAttribute("products")
@@ -69,5 +81,10 @@ public class DistributeurController {
     @ModelAttribute("userForm")
     public UserForm addUserForm() {
         return new UserForm();
+    }
+    
+    @ModelAttribute("buyForm")
+    public BuyForm addBuyForm() {
+        return new BuyForm();
     }
 }

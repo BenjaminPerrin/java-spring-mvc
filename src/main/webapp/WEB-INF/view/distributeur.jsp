@@ -8,7 +8,7 @@
     </head>
     <body>
         <h2>Crédit :${balance} </h2>
-        
+        <br/>
         <table>
             <caption>Liste des produits</caption>
             <tr>
@@ -25,13 +25,16 @@
                 </tr>
             </c:forEach>
         </table>
-        <caption>Ajouter du crédit</caption>
+        <br/>
         <form:form method="POST" action="/addBalance" modelAttribute="userForm">
+            <filedset>
+                <legend>Ajouter du crédit</legend>
+            </filedset>
             <table>
                 <tr>
                     <td><form:label path="balance">Credit</form:label></td>
                     <td>
-                        <form:input path="balance" type="number" />
+                        <form:input path="balance" type="number" step="0.01"/>
                         <form:errors path="balance" />
                     </td>
                 </tr>
@@ -40,7 +43,7 @@
                 </tr>
             </table>
         </form:form>
-        
+        <br/>
         <caption>Acheter un produit</caption>
         <form:form method="POST" action="/buyProduct" modelAttribute="buyForm">
             <table>
