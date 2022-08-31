@@ -13,8 +13,8 @@
             <caption>Liste des produits</caption>
             <tr>
                 <th>name</th>
-                <th>price</th>
                 <th>Quantity</th>
+                <th>price</th>
             </tr>
             <c:forEach var="product" items="${listProducts}">
                 <c:set var="p" value ="${product}" />
@@ -44,23 +44,16 @@
             </table>
         </form:form>
         <br/>
-        <caption>Acheter un produit</caption>
         <form:form method="POST" action="/buyProduct" modelAttribute="buyForm">
-            <table>
-                <tr>
-                    <td>
-                        <select name="products">
-                        <c:forEach items="${listProducts}" var="products">
-                        <c:if test="${products.quantity > 0}">
-                            <option value="${products.id}">${products.name}</option>
-                        </c:if>
-                        </c:forEach>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="submit" value="buy" /></td>
-                </tr>
-            </table>
+            <fieldset>
+                <legend>Acheter un produit</legend>
+                <p>
+                    <form:label path="id">Numéro du produit :</form:label>
+                    <form:input path="id" type="number" />
+                    <form:errors path="id" />
+                </p>
+                <input type="submit" value="Acheter" />
+            </fieldset>
         </form:form>
         
         

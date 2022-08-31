@@ -9,8 +9,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class BuyForm {
-    @Min(value=0,message = "Enter valide number")
-    @NotNull(message = "The field is mandotory")
+
+    @Min(value = 1, message = "Veuillez entrer un numéro de produit valide")
+    @NotNull(message = "Le champs 'numéro de produit' est obligatoire")
     private Long id;
 
     public Long getId() {
@@ -20,7 +21,4 @@ public class BuyForm {
     public void setId(Long id) {
         this.id = id;
     }
-
-    
-
 }

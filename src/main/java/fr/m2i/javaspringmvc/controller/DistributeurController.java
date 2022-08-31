@@ -4,6 +4,9 @@
  */
 package fr.m2i.javaspringmvc.controller;
 
+import exception.InsufficientBalanceException;
+import exception.NotEnoughStockException;
+import exception.NotFoundException;
 import fr.m2i.javaspringmvc.form.BuyForm;
 import fr.m2i.javaspringmvc.form.UserForm;
 import fr.m2i.javaspringmvc.model.Product;
@@ -59,24 +62,6 @@ public class DistributeurController {
         }
     }
     
-    @PostMapping("buyProduct")
-    public String buyProduct(@ModelAttribute("BuyForm") @Valid BuyForm buyform,
-            BindingResult result, ModelMap model) throws Exception{
-        
-        if (result.hasErrors()) {
-            return "distributeur";
-        }
-        //model.addAttribute("balance", user.getBalance()+userService.getBalance());
-        //userService.setBalance(user.getBalance()+userService.getBalance());
-        //return "redirect:distributeur";
-        try {
-//            userService.
-            return "redirect:distributeur";
-        } catch (Exception e) {
-            result.rejectValue("products", null, "Une erreur est survenue lors de l'achat");
-            return "distributeur";
-        }
-    }
     
     @ModelAttribute("listProducts")
     public List<Product> findAll() throws Exception{
@@ -111,5 +96,32 @@ public class DistributeurController {
     @ModelAttribute("buyForm")
     public BuyForm addBuyForm() {
         return new BuyForm();
+    }
+    
+     @PostMapping("/buyProduct")
+    public String buyProduct(@ModelAttribute("buyForm") @Valid BuyForm buyForm,
+            BindingResult result) {
+        
+        if (result.hasErrors()) {
+            return "distributeur";
+        }
+        
+        String errorMessage;
+
+        try {
+            productService.buyProduct(buyForm.getId());
+            return "redirect:distributeur";
+        } catch (NotFoundException nfe) {
+            errorMessage = "Le produit demandé n'existe pas";
+        } catch (NotEnoughStockException nese) {
+            errorMessage = "Le produit demandé n'est plus en stock";
+        } catch (InsufficientBalanceException ibe) {
+            errorMessage = "Vous manquez de crédit pour le produit demandé";
+        } catch (Exception e) {
+            errorMessage = "Une erreur est survenue lors de l'achat";
+        }
+
+        result.rejectValue("id", null, errorMessage);
+        return "distributeur";
     }
 }

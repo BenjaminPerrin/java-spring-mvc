@@ -1,5 +1,8 @@
 package fr.m2i.javaspringmvc.service;
 
+import exception.InsufficientBalanceException;
+import exception.NotEnoughStockException;
+import exception.NotFoundException;
 import fr.m2i.javaspringmvc.model.Product;
 import fr.m2i.javaspringmvc.model.User;
 import fr.m2i.javaspringmvc.repository.ProductRepository;
@@ -26,30 +29,43 @@ public class ProductService {
         return repo.findAll();
     }
     
-    public Product findById(Long id) throws Exception {
-        Product product = repo.findById(id).orElseThrow(() -> new Exception()); // Todo throw a custom exception called NotFoundException
-        return product;
+    public Product findBydId(Long id) throws NotFoundException {
+        return repo.findById(id).orElseThrow(() -> {
+            throw new NotFoundException("Product with id: " + id + " was not found");
+        });
     }
     
    public void addProduct(Product product) throws Exception {
         repo.save(product);
     }
-    
-    // acheter un produit
-    // -> Est ce que j'ai assez de crédit ?
-    // -> Est ce que le produit existe ? il reste du stock ?
-//   public void buyProduct(Product product) throws Exception {
-//       
-//       User user = UserRepository.findById(1L).orElseThrow(() -> new Exception()); // Todo throw a custom exception called NotFoundException
-//
-//        if (user.getBalance() > product.getPrice() && 
-//                findById(product.getId()) != null &&
-//                product.getQuantity() > 0) 
-//        {
-//
-//            user.addBalance(user.getBalance());
-//            repo.save(product);
-//        }
-//        
-//    }
+   
+      public void save(Product product) {
+        repo.save(product);
+    }
+      
+    public void buyProduct(Long id) throws Exception {
+        // Si le produit avec l'id passé en paramètre n'existe pas une NotFoundException sera levée
+        Product product = findBydId(id);
+
+        // On vérifie le stock du produit trouvé
+        // On lève une NotEnoughStockException si besoin
+        if (product.getQuantity() < 1) {
+            throw new NotEnoughStockException("Product with id: " + product.getId() + " has no more stock");
+        }
+
+        // Via le userService on vérifie que l'utilisateur a assez de crédit
+        // On lève une InsufficientBalanceException si besoin
+        if (userService.getBalance() < product.getPrice()) {
+            throw new InsufficientBalanceException("User do not have enough balance for the product with id: " + product.getId());
+        }
+        
+        // On met à jour la quantité du produit que l'utilisateur vient d'acheter
+        product.setQuantity(product.getQuantity() - 1);
+
+        // On met à jour le crédit de l'utilisateur
+        userService.decreaseBalance(product.getPrice());
+        
+        // On persist les nouvelles données du produit
+        save(product);
+    }
 }
